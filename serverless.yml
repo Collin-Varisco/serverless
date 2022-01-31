@@ -1,0 +1,34 @@
+service: crisco-serverless-api
+
+provider:
+    name: aws
+    runtime: nodejs14.x
+    profile: default
+    region: us-east-2
+
+plugins:
+  - serverless-s3-sync
+  - serverless-webpack
+package:
+    individually: true
+
+custom:
+    s3Sync:
+        - bucketName: crisco-serverless-2
+          localDir: UploadData
+
+functions:
+    getUser:
+        handler: lambdas/getUser.handler
+        events:
+            - http:
+                  path: get-user/{ID}
+                  method: GET
+                  cors: true
+
+resources:
+    Resources:
+        DemoBucketUpload:
+            Type: AWS::S3::Bucket
+            Properties:
+                BucketName: crisco-serverless-2
